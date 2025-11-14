@@ -29,15 +29,11 @@ import java.net.URL;
 import java.util.Base64;
 
 public class MinecraftSkinFetcher {
-
-    // Primary URL (Custom Server)
     private static final String CUSTOM_SKIN_URL = Config.config.PROFILE_URL;
-
-    // Fallback URL (Mojang Session Server)
     private static final String MOJANG_PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
     /**
-     * Attempts to get the skin URL first from the Custom Server, then falls back to Mojang.
+     * Attempt to retrieve the skin URL from either a custom server or Mojang (with optional fallback).
      * @param uuid The player's UUID.
      * @return The skin URL, or an empty string if both fail.
      */
@@ -53,7 +49,7 @@ public class MinecraftSkinFetcher {
     }
 
     /**
-     * Attempts to get the cape URL first from the Custom Server, then falls back to Mojang.
+     * Attempt to retrieve the cape URL from either a custom server or Mojang (with optional fallback).
      * @param uuid The player's UUID.
      * @return The cape URL, or an empty string if both fail.
      */
@@ -69,7 +65,7 @@ public class MinecraftSkinFetcher {
     }
 
     /**
-     * Checks for slim arms (Alex model) first from the Custom Server, then falls back to Mojang.
+     * Attempt to check for slim arms from either a custom server or Mojang (with optional fallback).
      * @param uuid The player's UUID.
      * @return true if the skin has slim arms, false otherwise.
      */
