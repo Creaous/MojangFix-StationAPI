@@ -21,6 +21,7 @@ import blue.endless.jankson.JsonElement;
 import blue.endless.jankson.JsonObject;
 import blue.endless.jankson.api.SyntaxError;
 import pl.telvarost.mojangfixstationapi.Config;
+import pl.telvarost.mojangfixstationapi.MojangFixStationApiMod;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -35,7 +36,7 @@ public class MinecraftSkinFetcher {
     /**
      * Attempt to retrieve the skin URL from either a custom server or Mojang (with optional fallback).
      * @param uuid The player's UUID.
-     * @return The skin URL, or an empty string if both fail.
+     * @return The skin URL, or an empty string.
      */
     public static String getSkinUrl(String uuid) {
         String skinUrl = null;
@@ -51,7 +52,7 @@ public class MinecraftSkinFetcher {
     /**
      * Attempt to retrieve the cape URL from either a custom server or Mojang (with optional fallback).
      * @param uuid The player's UUID.
-     * @return The cape URL, or an empty string if both fail.
+     * @return The cape URL, or an empty string.
      */
     public static String getCapeUrl(String uuid) {
         String capeUrl = null;
@@ -105,8 +106,7 @@ public class MinecraftSkinFetcher {
                 }
             }
         } catch (Exception e) {
-            // Print stack trace for primary server failures to aid debugging
-            System.err.println("[MojangFix] Error fetching " + type + " from " + baseUrl + " for " + uuid + ": " + e.getMessage());
+            MojangFixStationApiMod.getLogger().error("Error fetching {} from {} for {}. Exception: {}", type, baseUrl, uuid, e);
         }
         return "";
     }
@@ -141,7 +141,7 @@ public class MinecraftSkinFetcher {
                 return false;
             }
         } catch (Exception e) {
-            System.err.println("[MojangFix] Error checking slim arms from " + baseUrl + " for " + uuid + ": " + e.getMessage());
+            MojangFixStationApiMod.getLogger().error("Error fetching {} from {} for {}. Exception: {}", uuid, baseUrl, uuid, e);
         }
         return null; // Return null if a critical error or exception occurred
     }
@@ -153,7 +153,6 @@ public class MinecraftSkinFetcher {
     private static String fetchProfileJson(String uuid, String baseUrl) {
         try {
             URL url = new URL(baseUrl + uuid);
-            // System.out.println("Fetching profile from: " + url.toString()); // For detailed debug
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -176,14 +175,12 @@ public class MinecraftSkinFetcher {
                 connection.disconnect();
                 return content.toString();
             } else {
-                // Return null on non-200 responses (e.g., 404 Not Found, 429 Rate Limit, 500 Server Error)
-                System.err.println("[MojangFix] Failed to fetch profile from " + baseUrl + " for " + uuid + ". Response code: " + responseCode);
+                MojangFixStationApiMod.getLogger().error("Failed to fetch profile from {} for {}. Response code was {}", baseUrl, uuid, responseCode);
                 connection.disconnect();
                 return null;
             }
         } catch (Exception e) {
-            // Catches network errors, timeouts, etc.
-            System.err.println("[MojangFix] Network error fetching profile from " + baseUrl + " for " + uuid + ": " + e.getMessage());
+            MojangFixStationApiMod.getLogger().error("Network error fetching profile from {} for {}. Exception: {}", baseUrl, uuid, e);
             return null;
         }
     }
@@ -210,7 +207,7 @@ public class MinecraftSkinFetcher {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            MojangFixStationApiMod.getLogger().error("Error fetching profile from {} for {}. Exception: {}", profileJson, profileJson, e);
         }
         return null;
     }
@@ -223,7 +220,7 @@ public class MinecraftSkinFetcher {
             Jankson jankson = Jankson.builder().build();
             return jankson.load(json);
         } catch (SyntaxError e) {
-            e.printStackTrace();
+            MojangFixStationApiMod.getLogger().error("Failed to parse json from {}. Exception: {}", json, e);
         }
         return null;
     }
