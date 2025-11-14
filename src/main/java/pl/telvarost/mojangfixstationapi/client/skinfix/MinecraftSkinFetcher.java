@@ -42,12 +42,10 @@ public class MinecraftSkinFetcher {
      * @return The skin URL, or an empty string if both fail.
      */
     public static String getSkinUrl(String uuid) {
-        // 1. Attempt Custom Server (Primary)
-        String skinUrl = getTextureUrl(uuid, CUSTOM_SKIN_URL, "SKIN");
+        String skinUrl = null;
 
-        if (skinUrl.isEmpty() && Config.config.FALLBACK_TO_MOJANG) {
-            // 2. Fallback to Mojang API
-            System.out.println("[MojangFix] Custom server failed for " + uuid + ", falling back to Mojang Skin URL.");
+        if (Config.config.USE_CUSTOM_AUTH) skinUrl = getTextureUrl(uuid, CUSTOM_SKIN_URL, "SKIN");
+        if ((skinUrl == null || skinUrl.isEmpty()) && (!Config.config.USE_CUSTOM_AUTH || Config.config.FALLBACK_TO_MOJANG)) {
             skinUrl = getTextureUrl(uuid, MOJANG_PROFILE_URL, "SKIN");
         }
 
@@ -60,12 +58,10 @@ public class MinecraftSkinFetcher {
      * @return The cape URL, or an empty string if both fail.
      */
     public static String getCapeUrl(String uuid) {
-        // 1. Attempt Custom Server (Primary)
-        String capeUrl = getTextureUrl(uuid, CUSTOM_SKIN_URL, "CAPE");
+        String capeUrl = null;
 
-        if (capeUrl.isEmpty() && Config.config.FALLBACK_TO_MOJANG) {
-            // 2. Fallback to Mojang API
-            System.out.println("[MojangFix] Custom server failed for " + uuid + ", falling back to Mojang Cape URL.");
+        if (Config.config.USE_CUSTOM_AUTH) capeUrl = getTextureUrl(uuid, CUSTOM_SKIN_URL, "CAPE");
+        if ((capeUrl == null || capeUrl.isEmpty()) && (!Config.config.USE_CUSTOM_AUTH || Config.config.FALLBACK_TO_MOJANG)) {
             capeUrl = getTextureUrl(uuid, MOJANG_PROFILE_URL, "CAPE");
         }
 
@@ -78,16 +74,13 @@ public class MinecraftSkinFetcher {
      * @return true if the skin has slim arms, false otherwise.
      */
     public static boolean hasSlimArms(String uuid) {
-        // 1. Attempt Custom Server (Primary)
-        Boolean isSlim = checkSlimArms(uuid, CUSTOM_SKIN_URL);
+        Boolean isSlim = null;
 
-        if (isSlim == null && Config.config.FALLBACK_TO_MOJANG) {
-            // 2. Fallback to Mojang API
-            System.out.println("[MojangFix] Custom server failed for " + uuid + ", falling back to Mojang model check.");
+        if (Config.config.USE_CUSTOM_AUTH) isSlim = checkSlimArms(uuid, CUSTOM_SKIN_URL);
+        if (isSlim == null && (!Config.config.USE_CUSTOM_AUTH || Config.config.FALLBACK_TO_MOJANG)) {
             isSlim = checkSlimArms(uuid, MOJANG_PROFILE_URL);
         }
 
-        // If both failed, default to the classic model (false/Steve)
         return isSlim != null && isSlim;
     }
 
