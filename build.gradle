@@ -72,7 +72,7 @@ dependencies {
     mappings "net.glasslauncher:biny:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    def lombok = "org.projectlombok:lombok:1.18.22"
+    def lombok = "org.projectlombok:lombok:1.18.30"
     compileOnly lombok
     annotationProcessor lombok
     include(implementation("com.github.GeyserMC:MCAuthLib:d9d773e5d50327c33898c65cd545a4f6ef3ba1b5"))
@@ -135,7 +135,7 @@ tasks.withType(JavaCompile) {
 }
 
 spotless {
-    ratchetFrom "origin/master"
+    ratchetFrom "origin/stationapi-config"
     java {
         licenseHeaderFile(rootProject.file("HEADER"))
     }
