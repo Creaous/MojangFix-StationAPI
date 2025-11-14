@@ -57,7 +57,7 @@ public class ServerNetworkHandlerMixin {
         GameProfile gameProfile = SESSION_SERVICE.getProfileByServer(loginPacket.username, accessor.getServerId());
 
         if (gameProfile != null) {
-            MojangFixStationApiMod.getLogger().info("Authenticated " + gameProfile.getName() + " as " + gameProfile.getId());
+            MojangFixStationApiMod.getLogger().info("Authenticated " + gameProfile.getName() + " as " + gameProfile.getId() + " via " + SESSION_SERVICE.getBaseUri().getHost());
             accessor.setLoginPacket(loginPacket);
             return true; // Success
         }
