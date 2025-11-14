@@ -24,6 +24,9 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import org.spongepowered.asm.mixin.*;
 import pl.telvarost.mojangfixstationapi.Config;
 import pl.telvarost.mojangfixstationapi.MojangFixStationApiMod;
+import pl.telvarost.mojangfixstationapi.mixinterface.SessionAccessor;
+
+import java.net.URI;
 
 @Mixin(targets = "net.minecraft.server.network.ServerLoginNetworkHandler$AuthThread")
 public class ServerNetworkHandlerMixin {
@@ -71,11 +74,12 @@ public class ServerNetworkHandlerMixin {
     private void authenticate() {
         ServerNetworkHandlerAccessor accessor = (ServerNetworkHandlerAccessor) networkHandler;
 
-        try {
-            if (Config.config.USE_CUSTOM_AUTH) {
-                SESSION_SERVICE.setBaseUri(Config.config.SESSION_URL);
-            }
+        URI originalBaseUri = SessionAccessor.SESSION_SERVICE.getBaseUri();
+        if (Config.config.USE_CUSTOM_AUTH) {
+            SessionAccessor.SESSION_SERVICE.setBaseUri(Config.config.SESSION_URL);
+        }
 
+        try {
             if (attemptAuthentication(accessor)) {
                 return; // Success, stop here
             }
@@ -90,7 +94,7 @@ public class ServerNetworkHandlerMixin {
             MojangFixStationApiMod.getLogger().warn("Custom authentication failed with InvalidCredentials. Falling back to Mojang.");
 
             try {
-                SESSION_SERVICE.setBaseUri("https://sessionserver.mojang.com/");
+                SESSION_SERVICE.setBaseUri(originalBaseUri);
 
                 if (attemptAuthentication(accessor)) {
                     return; // Success on retry, stop here
