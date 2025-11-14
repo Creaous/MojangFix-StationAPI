@@ -162,5 +162,38 @@ public class Config {
                 description = "Restart required for changes to take effect"
         )
         public Boolean useResourcesDownloadURL = true;
+
+        @ConfigEntry(
+                name = "Use Custom Auth",
+                description = "Enable alternative authentication server, change values below. Ensure you trust the server"
+        )
+        public Boolean USE_CUSTOM_AUTH = false;
+
+        @ConfigEntry(
+                name = "Minecraft Profile URL",
+                description = "Profile fetching URL used for skins",
+                maxLength = 4096
+        )
+        public String PROFILE_URL = "https://sessionserver.mojang.com/session/minecraft/profile/";
+
+        @ConfigEntry(
+                name = "Minecraft Session URL",
+                description = "Session authentication (including multiplayer)",
+                maxLength = 4096
+        )
+        public String SESSION_URL = "https://sessionserver.mojang.com/session/minecraft/";
+
+        @ConfigEntry(
+                name = "Mojang Profiles URL",
+                description = "Bulk retrieval of player UUIDs",
+                maxLength = 4096
+        )
+        public String SESSION_PROFILES_URL = "https://api.mojang.com/profiles/";
+
+        @ConfigEntry(
+                name = "Fallback to Mojang",
+                description = "Switch to Mojang if custom service is unavailable"
+        )
+        public Boolean FALLBACK_TO_MOJANG = true;
     }
 }

@@ -20,6 +20,7 @@ import com.github.steveice10.mc.auth.exception.property.PropertyException;
 import net.minecraft.entity.player.PlayerEntity;
 import pl.telvarost.mojangfixstationapi.MojangFixStationApiMod;
 import pl.telvarost.mojangfixstationapi.client.skinfix.provider.AshconProfileProvider;
+import pl.telvarost.mojangfixstationapi.client.skinfix.provider.CustomProfileProvider;
 import pl.telvarost.mojangfixstationapi.client.skinfix.provider.MojangProfileProvider;
 import pl.telvarost.mojangfixstationapi.client.skinfix.provider.ProfileProvider;
 import pl.telvarost.mojangfixstationapi.mixin.client.MinecraftAccessor;
@@ -44,8 +45,6 @@ public class SkinService {
 
     private final ConcurrentMap<String, ReentrantLock> locks = new ConcurrentHashMap<>();
     private final Map<String, PlayerProfile> profiles = new HashMap<>();
-
-    private List<ProfileProvider> providers = Arrays.asList(new AshconProfileProvider(), new MojangProfileProvider());
 
     private static GameProfile.TextureModel getTextureModelForUUID(UUID uuid) {
         return MinecraftSkinFetcher.hasSlimArms(String.valueOf(uuid)) ? GameProfile.TextureModel.SLIM : GameProfile.TextureModel.NORMAL;
@@ -116,7 +115,15 @@ public class SkinService {
         try {
             if (profiles.containsKey(name)) return;
 
-            providers = Arrays.asList(new MojangProfileProvider(), new AshconProfileProvider());
+            List<ProfileProvider> providers = new ArrayList<>();
+            if (Config.config.USE_CUSTOM_AUTH) {
+                providers.add(new CustomProfileProvider());
+            }
+
+            if (Config.config.FALLBACK_TO_MOJANG || !Config.config.USE_CUSTOM_AUTH) {
+                providers.add(new MojangProfileProvider());
+                providers.add(new AshconProfileProvider());
+            }
 
             for (ProfileProvider provider : providers) {
                 GameProfile profile;
