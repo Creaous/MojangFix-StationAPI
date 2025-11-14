@@ -18,7 +18,7 @@ jobs:
       - name: build
         run: |
           # https://github.com/diffplug/spotless/tree/main/plugin-gradle#using-ratchetfrom-on-ci-systems
-          git fetch origin master
+          git fetch origin stationapi-config
 
           ./gradlew build
       - name: capture build artifacts
@@ -33,8 +33,8 @@ jobs:
           draft: false
           body_path: CHANGELOG.md
           files: build/libs/*.jar
-      - name: modrinth
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-        run: ./gradlew modrinth
+      # - name: modrinth
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   env:
+      #     MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      #   run: ./gradlew modrinth
